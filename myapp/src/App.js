@@ -1,52 +1,51 @@
 import React, { Component } from 'react';
-
+import './estilo.css';
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      form: {
-        nome: '',
-        email: '',
-        senha: '',
-        genero: ''
-      }
+      textoFrase: ''
     }
-    this.alteraDados = this.alteraDados.bind(this); 
 
+    this.frases = [
+      'Cale a boca de quem acreditou em você.',
+      'Siga os erros e aprenda com eles.',
+      'O bom-senso é superestimado e pouco útil.',
+      'O riso é a menor distância entre a solidão e a tristeza.',
+      'Preocupe-se sempre, pois a felicidade é ilusória.',
+      'Ignore o óbvio, não pense no improvável e aceite o impossível.',
+      'Acredite em tragédias, pois elas sempre acontecem.',
+      'A maior barreira para o sucesso é a esperança no futuro.'
+    ];  
+    this.quebraBiscoito = this.quebraBiscoito.bind(this);
   }
 
-  alteraDados(event) {
-    let form = this.state.form;
-    form[event.target.name] = event.target.value;
-    this.setState({ form: form });
+  quebraBiscoito(){
+    let state = this.state
+    let numeroAletario = Math.floor(Math.random() * this.frases.length);
+    state.textoFrase = '" ' + this.frases[numeroAletario] + ' "';
+    this.setState(state);
   }
-
   render() {
     return (
-      <div>
-        <h2>Login</h2>
-        Nome:
-        <input type='text' name='nome' value={this.state.form.nome} onChange={this.alteraDados} /> <br />
-        Email:
-        <input type='email' name='email' value={this.state.form.email} onChange={this.alteraDados} /> <br />
-        Senha:
-        <input type='password' name='senha' value={this.state.form.senha} onChange={this.alteraDados} /> <br />
-        Gênero:
-        <select name='genero' value={this.state.form.genero} onChange={this.alteraDados}>
-          <option value='Outros'>Outros</option>
-          <option value='Não binário'>Não binário</option>
-          <option value='Mulher'>Mulher</option>
-          <option value='Homem'>Homem</option>
-        </select>
-        <div>
-          <h3>{this.state.form.nome}</h3>
-          <h3>{this.state.form.email}</h3>
-          <h3>{this.state.form.senha}</h3>
-          <h3>{this.state.form.genero}</h3>
-        </div>
+      <div className='container'>
+        <img className='imagem' src={require('./assets/biscoito.png')}></img>
+        <Botao nome="Abrir biscoito" acaoBtn = {this.quebraBiscoito} />
+        <h3 className='textoFrase'>{this.state.textoFrase}</h3>
       </div>
     );
   }
 }
+
+class Botao extends Component{
+  render(){
+    return(
+      <div>
+        <button onClick={this.props.acaoBtn}>{this.props.nome}</button>
+      </div>
+    );
+  }
+}
+
 
 export default App;
