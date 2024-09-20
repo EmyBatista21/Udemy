@@ -4,48 +4,59 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      textoFrase: ''
+      numero: 0,
+      botao: 'GO'
     }
 
-    this.frases = [
-      'Cale a boca de quem acreditou em você.',
-      'Siga os erros e aprenda com eles.',
-      'O bom-senso é superestimado e pouco útil.',
-      'O riso é a menor distância entre a solidão e a tristeza.',
-      'Preocupe-se sempre, pois a felicidade é ilusória.',
-      'Ignore o óbvio, não pense no improvável e aceite o impossível.',
-      'Acredite em tragédias, pois elas sempre acontecem.',
-      'A maior barreira para o sucesso é a esperança no futuro.'
-    ];  
-    this.quebraBiscoito = this.quebraBiscoito.bind(this);
+    this.timer = null;
+
+    this.goOrPause = this.goOrPause.bind(this);
+    this.clear = this.clear.bind(this);
   }
 
-  quebraBiscoito(){
-    let state = this.state
-    let numeroAletario = Math.floor(Math.random() * this.frases.length);
-    state.textoFrase = '" ' + this.frases[numeroAletario] + ' "';
+  goOrPause(){
+    let state = this.state;
+    if(this.timer !==null){
+      clearInterval(this.timer);
+      this.timer = null;
+      state.botao = 'GO';
+    }else{
+      let state = this.state;
+      this.timer = setInterval(() => {
+        state.numero += 0.1;
+        this.setState(state);
+      }, 100)
+      state.botao = 'PAUSE'
+    }
     this.setState(state);
   }
+
+  clear(){
+    if(this.timer != null){
+      clearInterval(this.timer);
+      this.timer = null;
+    }
+
+    let state = this.state;
+    state.numero = 0;
+    state.botao = 'VAI';
+    this.setState(state);
+  }
+
+
   render() {
     return (
       <div className='container'>
-        <img className='imagem' src={require('./assets/biscoito.png')}></img>
-        <Botao nome="Abrir biscoito" acaoBtn = {this.quebraBiscoito} />
-        <h3 className='textoFrase'>{this.state.textoFrase}</h3>
+        <img className='img' src={require('./assets/cronometro.png')}/>
+        <a className='timer'>{this.state.numero.toFixed(1)}</a>
+
+        <div className='areaButton'>
+          <a onClick={this.goOrPause} className='button'>{this.state.botao}</a>
+          <a onClick={this.clear} className='button'>Clear</a>
+        </div>
       </div>
     );
   }
 }
-
-class Botao extends Component{
-  render(){
-    return(
-      <div>
-        <button onClick={this.props.acaoBtn}>{this.props.nome}</button>
-      </div>
-    );
-  }
-}
-
 
 export default App;
