@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 function App() {
   const [tarefas, setTarefas] = useState([]);
@@ -11,17 +11,18 @@ function App() {
     if(tarefasStorage){
       setTarefas(JSON.parse(tarefasStorage));
     }
-  }, []); //Executado quando o componente for renderizado pela primeira vez (componentDidMount), ou seja, isso está sendo controlado pelo o argumento "[]", que significa que esse useEffect só vai rodar quando "tarefas" estiver vazio.
+  }, []); 
   
   useEffect(() => {
     localStorage.setItem('tarefas', JSON.stringify(tarefas));
-  }, [tarefas]); //Executado quando o componente for renderizado toda vez que tarefas for atualizado (componentDidUpdate), ou seja, isso está sendo controlado pelo o argumento "[tarefas]", que significa que esse useEffect só vai toda vez que o estado "tarefas" mudar.
-
+  }, [tarefas]); 
 
   function addTask(){
     setTarefas([...tarefas, input]);
     setInput('');
   }
+
+  const totalTarefas = useMemo(() => tarefas.length, [tarefas]); //Só executa esse calculo quando tarefas sofrer uma alteração. O calculo de tarefas não precisará executar dentro do "return" e isso economiza recursos para tarefas custosas.
 
   return (
     <div>
@@ -30,8 +31,13 @@ function App() {
         {tarefas.map(tarefa => (
           <li key={tarefa}>{tarefa}</li>
         ))}
-      </ul>
+      </ul> 
+      <br/>
+      
+      <strong>Você tem {totalTarefas} tarefas</strong>
+
       <input type='text' placeholder='Adicione a tarefa' value={input} onChange={(e) => setInput(e.target.value)}/>
+
       <button type='button' onClick={addTask}
       >Salvar</button>
     </div>
