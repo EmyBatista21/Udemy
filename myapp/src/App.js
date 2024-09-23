@@ -1,50 +1,41 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import './estilo.css'
+// https://sujeitoprogramador.com/rn-api/?api=posts
 
 function App() {
-  const [tarefas, setTarefas] = useState([]);
+  const [nutri, setNutri] = useState([]);
 
-  const [input, setInput] = useState('');
-
-  useEffect(() =>{
-    const tarefasStorage = localStorage.getItem('tarefas');
-
-    if(tarefasStorage){
-      setTarefas(JSON.parse(tarefasStorage));
-    }
-  }, []); 
-  
   useEffect(() => {
-    localStorage.setItem('tarefas', JSON.stringify(tarefas));
-  }, [tarefas]); 
+    function loadApi(){
+      let url = 'https://sujeitoprogramador.com/rn-api/?api=posts';
 
-  const addTask = useCallback(() => {
-    setTarefas([...tarefas, input]);
-    setInput('');
-  }, [input, tarefas]);
+      fetch(url)
+      .then((resultado) => resultado.json())
+      .then((json) => {
+        console.log(json);
+        setNutri(json);
+      })
+    }
 
-  // A quando addTask era função ela está dentro de outra função, então temo duas variaveis 'input' e 'tarefa'. Toda vez que o componente era renderizado a função addTask era recriada, mas só faz sentido ela ser recriada quando tanto 'input' ou 'tarefas' forem atualizada. Então o useCallback é utilizado para memorizar uma função, ou seja, ele garante que uma função será recriada apenas quando alguma de suas dependências mudar. Isso é útil para evitar a criação de novas instâncias de funções desnecessariamente, o que pode melhorar a performance do componente. 
-
-  const totalTarefas = useMemo(() => tarefas.length, [tarefas]); 
-  //Só executa esse calculo quando tarefas sofrer uma alteração. O calculo de tarefas não precisará executar dentro do "return" e isso economiza recursos para tarefas custosas.
-
-
+    loadApi();
+  }, []);
 
   return (
-    <div>
-      <h1>To Do</h1>
-      <ul>
-        {tarefas.map(tarefa => (
-          <li key={tarefa}>{tarefa}</li>
-        ))}
-      </ul> 
-      <br/>
-      
-      <strong>Você tem {totalTarefas} tarefas</strong>
+    <div className='container'>
+     <header>
+      <strong>React Nutric</strong>
+     </header>
 
-      <input type='text' placeholder='Adicione a tarefa' value={input} onChange={(e) => setInput(e.target.value)}/>
-
-      <button type='button' onClick={addTask}
-      >Salvar</button>
+     {nutri.map((item) =>{
+      return(
+        <article key={item.id} className='post'>
+          <strong className='titulo'>{item.titulo}</strong>
+          <img src={item.capa} alt={item.titulo} className='capa'/>
+          <p className='subtitulo'>{item.subtitulo}</p>
+          <a className='botao'>Acessar</a>
+        </article>
+      )
+     } )}
     </div>
   );
 }
