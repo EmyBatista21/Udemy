@@ -1,62 +1,31 @@
-import React, { Component } from 'react';
-import './estilo.css';
-class App extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      numero: 0,
-      botao: 'GO'
-    }
+import React, { useState } from 'react';
 
-    this.timer = null;
+function App() {
+  const [tarefas, setTarefas] = useState([
+    'Pagar a conta de luz',
+    'Estudar React'
+  ]);
 
-    this.goOrPause = this.goOrPause.bind(this);
-    this.clear = this.clear.bind(this);
+  const [input, setInput] = useState('');
+
+  function addTask(){
+    setTarefas([...tarefas, input])
+    setInput('');
   }
 
-  goOrPause(){
-    let state = this.state;
-    if(this.timer !==null){
-      clearInterval(this.timer);
-      this.timer = null;
-      state.botao = 'GO';
-    }else{
-      let state = this.state;
-      this.timer = setInterval(() => {
-        state.numero += 0.1;
-        this.setState(state);
-      }, 100)
-      state.botao = 'PAUSE'
-    }
-    this.setState(state);
-  }
-
-  clear(){
-    if(this.timer != null){
-      clearInterval(this.timer);
-      this.timer = null;
-    }
-
-    let state = this.state;
-    state.numero = 0;
-    state.botao = 'VAI';
-    this.setState(state);
-  }
-
-
-  render() {
-    return (
-      <div className='container'>
-        <img className='img' src={require('./assets/cronometro.png')}/>
-        <a className='timer'>{this.state.numero.toFixed(1)}</a>
-
-        <div className='areaButton'>
-          <a onClick={this.goOrPause} className='button'>{this.state.botao}</a>
-          <a onClick={this.clear} className='button'>Clear</a>
-        </div>
-      </div>
-    );
-  }
+  return (
+    <div>
+      <h1>To Do</h1>
+      <ul>
+        {tarefas.map(tarefa => (
+          <li key={tarefa}>{tarefa}</li>
+        ))}
+      </ul>
+      <input type='text' value={input} onChange={e => setInput(e.target.value)}/>
+      <button type='button' onClick={addTask}
+      >Adcionar Tarefa</button>
+    </div>
+  );
 }
 
 export default App;
